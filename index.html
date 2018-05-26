@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>XlsQifParser</title>
+  <link rel="stylesheet" href="./css/index.css" />
+</head>
+
+<body class="container center">
+  <h1>Converter</h1>
+  <div class="row">
+    <div class="col-6">
+      <div class="form-group">
+        <label>Source:</label>
+        <input type="button" value="Search file..." onclick="openFile()" class="form-control" />
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-group">
+        <label>Destination:</label>
+        <input type="button" value="Select destination..." onclick="saveFile()" class="form-control" />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <input type="button" value="Convert" onclick="convert()" id="btnConvert" class="form-control" />
+    </div>
+  </div>
+  <input type="hidden" id="srcPath" value="C:\QifParser\source.xlsx" />
+  <input type="hidden" id="dstPath" value="C:\QifParser\bank.qif" />
+  </div>
+  <script>
+    // You can also require other files to run in this process
+    require('./dist/renderer.js')
+    const index = require('./dist/index.js')
+
+    const remote = require('electron').remote;
+    const dialog = remote.dialog;
+    const srcPath = document.getElementById('srcPath');
+    const dstPath = document.getElementById('dstPath');
+    const btnConvert = document.getElementById('btnConvert');
+
+    checkPaths();
+
+    function openFile() {
+      dialog.showOpenDialog((filename) => {
+        srcPath.value = filename;
+      });
+      checkPaths();
+    }
+    function saveFile() {
+      dialog.showSaveDialog((filename) => {
+        dstPath.value = filename;
+      });
+      checkPaths();
+    }
+
+    function checkPaths() {
+      if (srcPath.value != undefined && dstPath.value != undefined) {
+        btnConvert.removeAttribute('dsiabled');
+      }
+      else btnConvert.setAttribute('dsiabled', 'disabled');
+    }
+
+    function convert() {
+      index.convertExcelToQif(srcPath.value, dstPath.value)
+      alert("Done!");
+    }
+  </script>
+</body>
+
+</html>
