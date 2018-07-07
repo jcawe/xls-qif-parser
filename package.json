@@ -2,24 +2,25 @@
   "name": "xls-qif-converter",
   "version": "1.0.0",
   "description": "A minimal Electron application written with Typescript",
+  "main": "./dist/main.js",
   "scripts": {
     "build": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "npm run build && electron ./dist/main.js --inspect=9229 --debug-brk",
-    "package-win": "electron-packager . --platform=win32 --arch=ia32 --out=release-builds --overwrite"
+    "package-win": "npm run build && electron-packager . --platform=win32 --arch=ia32 --out=release-builds --overwrite --asar"
   },
   "devDependencies": {
     "electron": "1.8.4",
     "electron-packager": "^11.2.0",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.2",
-    "xlsx": "^0.12.7"
+    "typescript": "^2.6.2"
   },
   "dependencies": {
     "bootstrap": "^4.0.0",
     "jquery": "^3.3.1",
     "moment": "^2.21.0",
     "popper": "^1.0.1",
-    "smalltalk": "^3.0.0"
+    "smalltalk": "^3.0.0",
+    "xlsx": "^0.12.7"
   }
 }
