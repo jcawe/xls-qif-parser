@@ -1,72 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>XlsQifParser</title>
-  <link rel="stylesheet" href="./css/index.css" />
+  <title>XLS QIF CONVERTER</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body class="container center">
-  <h1>Converter</h1>
-  <div class="row">
-    <div class="col-6">
-      <div class="form-group">
-        <label>Source:</label>
-        <input type="button" value="Search file..." onclick="openFile()" class="form-control" />
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo center">XLS QIF Converter</a>
+    </div>
+  </nav>
+  <div class="center">
+    <form>
+      <div id="form-buttons" class="scale-transition">
+        <a href="#" class="waves-effect waves-light btn-large" onclick="selectExcel()">Select excel file...</a>
+        <a id="btnQif" href="#" class="waves-effect waves-light btn-large disabled" onclick="selectQif()">Select save location...</a>
+        <button id="btnConvert" type="submit" class="waves-effect waves-light btn-large disabled">
+          Convert
+          <i class="material-icons right">autorenew</i>
+        </button>
+      </div>
+    </form>
+    <div id="loader" class="preloader-wrapper big">
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
       </div>
     </div>
-    <div class="col-6">
-      <div class="form-group">
-        <label>Destination:</label>
-        <input type="button" value="Select destination..." onclick="saveFile()" class="form-control" />
-      </div>
+    <div id="error" class="card-panel center red darken-1 hide scale-transition scale-out white-text">
+      <h2 class="card-title">
+        <i class="medium material-icons">error</i>ERROR!</h2>
+      <p id="errorText"></p>
+      <a onclick="reload()" class="btn-floating pulse red">
+        <i class="material-icons">refresh</i>
+      </a>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <input type="button" value="Convert" onclick="convert()" id="btnConvert" class="form-control" />
+    <div id="success" class="card-panel center teal darken-1 hide scale-transition scale-out white-text">
+      <h2 class="card-title">
+        <i class="medium material-icons">check</i>SUCCESS!</h2>
+      <p>File converted successfully!</p>
+      <a onclick="reload()" class="btn-floating pulse">
+        <i class="material-icons">refresh</i>
+      </a>
     </div>
-  </div>
-  <input type="hidden" id="srcPath" value="C:\QifParser\source.xlsx" />
-  <input type="hidden" id="dstPath" value="C:\QifParser\bank.qif" />
   </div>
   <script>
-    // You can also require other files to run in this process
-    require('./dist/renderer.js')
-    const index = require('./dist/index.js')
+    const electron = require('electron');
+    const { ipcRenderer } = electron;
+    const form = document.getElementsByTagName("form")[0];
+    const btnQif = document.getElementById("btnQif");
+    const btnConvert = document.getElementById("btnConvert");
+    const loader = document.getElementById("loader");
+    const formButtons = document.getElementById("form-buttons");
 
-    const remote = require('electron').remote;
-    const dialog = remote.dialog;
-    const srcPath = document.getElementById('srcPath');
-    const dstPath = document.getElementById('dstPath');
-    const btnConvert = document.getElementById('btnConvert');
+    form.addEventListener("submit", convert, false);
 
-    checkPaths();
-
-    function openFile() {
-      dialog.showOpenDialog((filename) => {
-        srcPath.value = filename;
-      });
-      checkPaths();
-    }
-    function saveFile() {
-      dialog.showSaveDialog((filename) => {
-        dstPath.value = filename;
-      });
-      checkPaths();
+    function selectExcel() {
+      ipcRenderer.send("btn:selectExcel");
     }
 
-    function checkPaths() {
-      if (srcPath.value != undefined && dstPath.value != undefined) {
-        btnConvert.removeAttribute('dsiabled');
-      }
-      else btnConvert.setAttribute('dsiabled', 'disabled');
+    function selectQif() {
+      ipcRenderer.send("btn:selectQif");
     }
 
-    function convert() {
-      index.convertExcelToQif(srcPath.value, dstPath.value)
-      alert("Done!");
+    function convert(e) {
+      e.preventDefault();
+      formButtons.classList.add("scale-out");
+      loader.classList.add("active");
+      ipcRenderer.send("btn:convert");
+    }
+
+    ipcRenderer.on("path:excel", function (active) {
+      activateButton(btnQif, active);
+    });
+
+    ipcRenderer.on("path:qif", function (active) {
+      activateButton(btnConvert, active);
+    });
+
+    ipcRenderer.on("error", function (e, error) {
+      document.getElementById("errorText").textContent = error;
+      document.getElementById("error").classList.remove("hide");
+      document.getElementById("error").classList.add("scale-in");
+      loader.classList.remove("active");
+    });
+
+    ipcRenderer.on("success", function () {
+      loader.classList.remove("active");
+      document.getElementById("success").classList.remove("hide");
+      document.getElementById("success").classList.add("scale-in");
+    });
+
+    function activateButton(button, active) {
+      if (active) button.classList.remove("disabled");
+      else button.classList.add("disabled");
+    }
+
+    function reload() {
+      location.reload();
     }
   </script>
 </body>

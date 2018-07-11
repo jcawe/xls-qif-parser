@@ -1,17 +1,32 @@
-import { app, BrowserWindow, dialog } from "electron";
+import { app, BrowserWindow, Menu, ipcMain, dialog } from "electron";
 import * as path from "path";
 import * as url from "url";
+import { convertExcelToQif } from "./index";
 
 let mainWindow: Electron.BrowserWindow;
 
+let excelPath: string, qifPath: string;
+
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800
-  });
+  mainWindow = new BrowserWindow({});
 
-  mainWindow.setMenu(null);
+  mainWindow.setMenu(Menu.buildFromTemplate([
+    {
+      label: "DevTools",
+      submenu: [
+        {
+          role: "reload"
+        },
+        {
+          label: "Open Devpanel",
+          click(item, focusedWindow) {
+            focusedWindow.webContents.openDevTools();
+          }
+        }
+      ]
+    }
+  ]));
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -21,7 +36,7 @@ function createWindow() {
   }));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
@@ -31,6 +46,47 @@ function createWindow() {
     mainWindow = null;
   });
 }
+
+ipcMain.on("btn:selectExcel", function () {
+  dialog.showOpenDialog(mainWindow,
+    {
+      filters: [
+        {name: 'Excel', extensions: ['xlsx']}
+      ]
+    },
+    (filename) => {
+      if(filename === undefined) return;
+
+      mainWindow.webContents.send("path:excel", filename !== undefined);
+      excelPath = filename[0];
+    }
+  );
+});
+
+ipcMain.on("btn:selectQif", function () {
+  dialog.showSaveDialog(mainWindow, 
+    {
+      filters: [
+        {name: 'Qif', extensions: ['qif']}
+      ]
+    },
+    (filename) => {
+      if(filename === undefined) return;
+
+      mainWindow.webContents.send("path:qif", filename !== undefined);
+      qifPath = filename;
+    }
+  );
+});
+
+ipcMain.on("btn:convert", function () {
+  try {
+    convertExcelToQif(excelPath, qifPath);
+    mainWindow.webContents.send("success");
+  } catch (error) {
+    mainWindow.webContents.send("error", error);
+  }
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

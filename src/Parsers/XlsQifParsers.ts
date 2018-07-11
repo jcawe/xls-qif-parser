@@ -54,7 +54,6 @@ export class SheetQifParser implements IParser<WorkSheet, QifLine[]> {
         let detail = new QifDetail();
         detail.type = this.schema[col];
 
-        debugger;
         if(this.schema[col] === QifDetailType.D){
             detail.value = moment(cell.v as Date).format("MM/DD/YYYY");
         }
