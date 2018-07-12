@@ -1,8 +1,8 @@
-import { IXlsQifSchema } from "./Parsers/IXlsQifSchema";
+import { XlsQifParseManager } from "./Managers/XlsQifParseManager";
 import { QifDetailType } from "./Models/QifDetail";
 import { QifFileType } from "./Models/QifFile";
+import { IXlsQifSchema } from "./Parsers/IXlsQifSchema";
 import { SheetQifParser } from "./Parsers/SheetQifParser";
-import { XlsQifParseManager } from "./Managers/XlsQifParseManager";
 import { XlsQifParser } from "./Parsers/XlsQifParser";
 
 export function convertExcelToQif(src: string, dest: string) {
