@@ -5,7 +5,7 @@ import { QifLine } from "../Models/QifLine";
 import { QifFile } from "../Models/QifFile";
 import { IParser } from "./IParser";
 
-export interface XlsQifSchema {
+export interface IXlsQifSchema {
     [def: number]: QifDetailType;
 }
 
@@ -28,9 +28,9 @@ export class XlsQifParser implements IParser<WorkBook, QifFile> {
 }
 
 export class SheetQifParser implements IParser<WorkSheet, QifLine[]> {
-    public schema: XlsQifSchema;
+    public schema: IXlsQifSchema;
 
-    constructor(schema: XlsQifSchema) {
+    constructor(schema: IXlsQifSchema) {
         this.schema = schema;
     }
 
