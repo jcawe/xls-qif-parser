@@ -1,4 +1,4 @@
-import { WorkBook } from "xlsx/types";
+import { WorkBook } from "xlsx";
 import { QifFile } from "../Models/QifFile";
 import { IParser } from "./IParser";
 import { SheetQifParser } from "./SheetQifParser";

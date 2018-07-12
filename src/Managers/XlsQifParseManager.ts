@@ -1,5 +1,5 @@
 import fs = require("fs");
-import { read, utils, WorkBook } from "xlsx/types";
+import { read, WorkBook } from "xlsx";
 import { QifFile, QifFileType } from "../Models/QifFile";
 import { IParser } from "../Parsers/IParser";
 
@@ -10,11 +10,11 @@ export class XlsQifParseManager {
     }
 
     public convert(srcPath: string, destPath: string, fileType: QifFileType) {
-        const wb = read(srcPath, {type: "file", cellDates: true});
+        const wb = read(srcPath, { type: "file", cellDates: true });
 
         const file = this.parser.parse(wb);
         file.type = fileType;
 
-        fs.writeFile(destPath, file.toString(), (err) => { throw err.message; });
+        fs.writeFile(destPath, file.toString(), (err) => { if(err) throw err.message; });
     }
 }
