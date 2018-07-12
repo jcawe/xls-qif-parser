@@ -52,7 +52,7 @@ function switchButton(btn, active) {
 ipcMain.on("path:excel", (e, path) => switchButton("excel", path === ""));
 ipcMain.on("path:qif", (e, path) => switchButton("qif", path === ""));
 
-ipcMain.on("btn:selectExcel", function() {
+ipcMain.on("btn:selectExcel", () => {
   dialog.showOpenDialog(mainWindow,
     {
       filters: [
@@ -66,7 +66,7 @@ ipcMain.on("btn:selectExcel", function() {
   );
 });
 
-ipcMain.on("btn:selectQif", function() {
+ipcMain.on("btn:selectQif", () => {
   dialog.showSaveDialog(mainWindow,
     {
       filters: [
@@ -80,7 +80,7 @@ ipcMain.on("btn:selectQif", function() {
   );
 });
 
-ipcMain.on("btn:convert", function(e, excelPath: string, qifPath: string) {
+ipcMain.on("btn:convert", (e, excelPath: string, qifPath: string) => {
   try {
     convertExcelToQif(excelPath, qifPath);
     mainWindow.webContents.send("success");
