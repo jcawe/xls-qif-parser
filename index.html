@@ -11,33 +11,42 @@
 <body>
   <nav>
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo center">XLS QIF Converter</a>
+      <a class="brand-logo center">XLS QIF Converter</a>
     </div>
   </nav>
   <div class="center">
     <form>
       <div id="form-buttons" class="scale-transition">
-        <a href="#" class="waves-effect waves-light btn-large" onclick="selectExcel()">Select excel file...</a>
-        <a id="btnQif" href="#" class="waves-effect waves-light btn-large disabled" onclick="selectQif()">Select save location...</a>
-        <button id="btnConvert" type="submit" class="waves-effect waves-light btn-large disabled">
-          Convert
-          <i class="material-icons right">autorenew</i>
-        </button>
+        <fieldset>
+          <div class="file-field input-field">
+            <div id="btnExcel" class="btn waves-effect waves-light btn-floating pulse">
+              <i class="material-icons small">attachment</i>
+            </div>
+
+            <div class="file-path-wrapper">
+              <input id="excel-file" type="text" class="file-path validate" placeholder="Select a excel file">
+            </div>
+          </div>
+
+          <div class="file-field input-field">
+            <div id="btnQif" class="btn waves-effect waves-light btn-floating pulse">
+              <i class="material-icons small">attachment</i>
+            </div>
+
+            <div class="file-path-wrapper">
+              <input id="qif-file" type="text" class="file-path validate" placeholder="Select path to save qif file">
+            </div>
+          </div>
+
+          <button id="btnConvert" type="submit" class="waves-effect waves-light btn-large disabled">
+            Convert
+            <i class="material-icons right">autorenew</i>
+          </button>
+        </fieldset>
+        <a id="btnQif" class="waves-effect waves-light btn-large disabled" onclick="selectQif()">Select save location...</a>
       </div>
     </form>
-    <div id="loader" class="preloader-wrapper big">
-      <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-          <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-          <div class="circle"></div>
-        </div>
-      </div>
-    </div>
+
     <div id="error" class="card-panel center red darken-1 hide scale-transition scale-out white-text">
       <h2 class="card-title">
         <i class="medium material-icons">error</i>ERROR!</h2>
@@ -46,6 +55,7 @@
         <i class="material-icons">refresh</i>
       </a>
     </div>
+
     <div id="success" class="card-panel center teal darken-1 hide scale-transition scale-out white-text">
       <h2 class="card-title">
         <i class="medium material-icons">check</i>SUCCESS!</h2>
@@ -55,52 +65,85 @@
       </a>
     </div>
   </div>
+
   <script>
     const electron = require('electron');
     const { ipcRenderer } = electron;
     const form = document.getElementsByTagName("form")[0];
+    const btnExcel = document.getElementById("btnExcel");
     const btnQif = document.getElementById("btnQif");
     const btnConvert = document.getElementById("btnConvert");
     const loader = document.getElementById("loader");
     const formButtons = document.getElementById("form-buttons");
+    const excelFile = document.getElementById("excel-file");
+    const qifFile = document.getElementById("qif-file");
 
     form.addEventListener("submit", convert, false);
+    excelFile.addEventListener("change", function() {
+      ipcRenderer.send("path:excel", this.value);
+    }, false);
 
-    function selectExcel() {
-      ipcRenderer.send("btn:selectExcel");
-    }
-
-    function selectQif() {
+    btnQif.addEventListener("click", function(e) {
+      e.preventDefault();
       ipcRenderer.send("btn:selectQif");
-    }
+    }, false);
+
+    btnExcel.addEventListener("click", function(e) {
+      e.preventDefault();
+      ipcRenderer.send("btn:selectExcel");
+    }, false);
 
     function convert(e) {
       e.preventDefault();
       formButtons.classList.add("scale-out");
-      loader.classList.add("active");
-      ipcRenderer.send("btn:convert");
+      ipcRenderer.send("btn:convert", excelFile.value, qifFile.value);
     }
 
-    ipcRenderer.on("path:excel", function (active) {
-      activateButton(btnQif, active);
+    ipcRenderer.on("btn:excel", function (e, active) {
+      focusButton(btnExcel, active);
+      checkInputs();
+    });
+    
+    ipcRenderer.on("btn:qif", function (e, active) {
+      focusButton(btnQif, active);
+    });
+    
+    ipcRenderer.on("path:excel", function (e, filename) {
+      excelFile.value = filename;
+      if(filename !== "") excelFile.classList.add("valid");
+      else excelFile.classList.remove("valid");
+      checkInputs();
+    });
+    
+    ipcRenderer.on("path:qif", function (e, filename) {
+      qifFile.value = filename;
+      if(filename !== "") qifFile.classList.add("valid");
+      else qifFile.classList.remove("valid");
+      checkInputs();
     });
 
-    ipcRenderer.on("path:qif", function (active) {
+    function checkInputs(){
+      var active = qifFile.value !== "" && excelFile.value !== "";
       activateButton(btnConvert, active);
-    });
-
+      focusButton(btnConvert, active);
+    }
     ipcRenderer.on("error", function (e, error) {
       document.getElementById("errorText").textContent = error;
       document.getElementById("error").classList.remove("hide");
       document.getElementById("error").classList.add("scale-in");
-      loader.classList.remove("active");
+      formButtons.classList.add("hide");
     });
 
     ipcRenderer.on("success", function () {
-      loader.classList.remove("active");
       document.getElementById("success").classList.remove("hide");
       document.getElementById("success").classList.add("scale-in");
+      formButtons.classList.add("hide");
     });
+
+    function focusButton(button, active){
+      if (active) button.classList.add("pulse");
+      else button.classList.remove("pulse");
+    }
 
     function activateButton(button, active) {
       if (active) button.classList.remove("disabled");

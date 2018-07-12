@@ -5,8 +5,6 @@ import { convertExcelToQif } from "./index";
 
 let mainWindow: Electron.BrowserWindow;
 
-let excelPath: string, qifPath: string;
-
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({});
@@ -47,6 +45,13 @@ function createWindow() {
   });
 }
 
+function switchButton(btn, active) {
+  mainWindow.webContents.send("btn:" + btn, active);
+}
+
+ipcMain.on("path:excel", (e, path) => switchButton("excel", path === ""));
+ipcMain.on("path:qif", (e, path) => switchButton("qif", path === ""));
+
 ipcMain.on("btn:selectExcel", function () {
   dialog.showOpenDialog(mainWindow,
     {
@@ -55,36 +60,32 @@ ipcMain.on("btn:selectExcel", function () {
       ]
     },
     (filename) => {
-      if(filename === undefined) return;
-
-      mainWindow.webContents.send("path:excel", filename !== undefined);
-      excelPath = filename[0];
+      switchButton("excel", filename === undefined);
+      mainWindow.webContents.send("path:excel", filename[0]);
     }
   );
 });
 
 ipcMain.on("btn:selectQif", function () {
-  dialog.showSaveDialog(mainWindow, 
+  dialog.showSaveDialog(mainWindow,
     {
       filters: [
-        {name: 'Qif', extensions: ['qif']}
+        { name: 'Qif', extensions: ['qif'] }
       ]
     },
     (filename) => {
-      if(filename === undefined) return;
-
-      mainWindow.webContents.send("path:qif", filename !== undefined);
-      qifPath = filename;
+      switchButton("qif", filename === undefined);
+      mainWindow.webContents.send("path:qif", filename);
     }
   );
 });
 
-ipcMain.on("btn:convert", function () {
+ipcMain.on("btn:convert", function (e, excelPath: string, qifPath: string) {
   try {
     convertExcelToQif(excelPath, qifPath);
     mainWindow.webContents.send("success");
   } catch (error) {
-    mainWindow.webContents.send("error", error);
+    mainWindow.webContents.send("error", error.message);
   }
 })
 

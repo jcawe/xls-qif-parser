@@ -1,8 +1,16 @@
 {
   "name": "xls-qif-converter",
   "version": "1.0.0",
-  "description": "A minimal Electron application written with Typescript",
+  "description": "Converter from xlsx to qif format",
   "main": "./dist/main.js",
+  "author": {
+    "name": "Jose Antonio Cáceres Romero",
+    "url": "http://github.com/jcawe"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jcawe/xls-qif-parser"
+  },
   "scripts": {
     "build": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
@@ -10,12 +18,12 @@
     "package-win": "npm run build && electron-packager . --platform=win32 --arch=ia32 --out=release-builds --overwrite --asar"
   },
   "devDependencies": {
-    "electron": "1.8.4",
     "electron-packager": "^11.2.0",
     "tslint": "^5.9.1",
     "typescript": "^2.6.2"
   },
   "dependencies": {
+    "electron": "1.8.4",
     "bootstrap": "^4.0.0",
     "jquery": "^3.3.1",
     "moment": "^2.21.0",
