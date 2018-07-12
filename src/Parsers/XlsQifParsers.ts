@@ -1,22 +1,22 @@
-import { IParser } from "./IParser";
-import { read, utils, WorkBook, WorkSheet, CellObject } from 'xlsx';
-import { QifFile, QifLine, QifDetailType, QifDetail } from "../Models/QifModels";
 import * as moment from "moment";
+import { CellObject, read, utils, WorkBook, WorkSheet } from "xlsx";
+import { QifDetail, QifDetailType, QifFile, QifLine } from "../Models/QifModels";
+import { IParser } from "./IParser";
 
 export interface XlsQifSchema {
-    [def: number]: QifDetailType
+    [def: number]: QifDetailType;
 }
 
 export class XlsQifParser implements IParser<WorkBook, QifFile> {
-    sheetParser: SheetQifParser;
+    public sheetParser: SheetQifParser;
     constructor(sheetParser: SheetQifParser) {
         this.sheetParser = sheetParser;
     }
 
     public parse(data: WorkBook): QifFile {
-        let file = new QifFile();
-        data.SheetNames.forEach(sheetName => {
-            this.sheetParser.parse(data.Sheets[sheetName]).forEach(qifLine => {
+        const file = new QifFile();
+        data.SheetNames.forEach((sheetName) => {
+            this.sheetParser.parse(data.Sheets[sheetName]).forEach((qifLine) => {
                 file.lines.push(qifLine);
             });
         });
@@ -26,22 +26,22 @@ export class XlsQifParser implements IParser<WorkBook, QifFile> {
 }
 
 export class SheetQifParser implements IParser<WorkSheet, QifLine[]> {
-    schema: XlsQifSchema;
+    public schema: XlsQifSchema;
 
     constructor(schema: XlsQifSchema) {
         this.schema = schema;
     }
 
     public parse(data: WorkSheet): QifLine[] {
-        let lines: QifLine[] = [];
-        let ref = utils.decode_range(data['!ref']);
+        const lines: QifLine[] = [];
+        const ref = utils.decode_range(data["!ref"]);
 
         for (let row = ref.s.r; row <= ref.e.r; row++) {
-            let line = new QifLine();
+            const line = new QifLine();
             for (let col = ref.s.c; col <= ref.e.c; col++) {
                 const cellAddress: string = utils.encode_cell({ c: col, r: row });
                 const cell: CellObject = data[cellAddress];
-                let detail = this.createDetail(cell, col);
+                const detail = this.createDetail(cell, col);
                 line.details.push(detail);
             }
             lines.push(line);
@@ -50,14 +50,13 @@ export class SheetQifParser implements IParser<WorkSheet, QifLine[]> {
         return lines;
     }
 
-    createDetail(cell: CellObject, col: number): QifDetail {
-        let detail = new QifDetail();
+    public createDetail(cell: CellObject, col: number): QifDetail {
+        const detail = new QifDetail();
         detail.type = this.schema[col];
 
-        if(this.schema[col] === QifDetailType.D){
+        if (this.schema[col] === QifDetailType.D) {
             detail.value = moment(cell.v as Date).format("MM/DD/YYYY");
-        }
-        else detail.value = cell.v.toString();
+        } else { detail.value = cell.v.toString(); }
 
         return detail;
     }
