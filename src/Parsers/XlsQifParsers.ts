@@ -1,6 +1,8 @@
 import * as moment from "moment";
-import { CellObject, read, utils, WorkBook, WorkSheet } from "xlsx";
-import { QifDetail, QifDetailType, QifFile, QifLine } from "../Models/QifModels";
+import { CellObject, read, utils, WorkBook, WorkSheet } from "xlsx/types";
+import { QifDetail, QifDetailType } from "../Models/QifDetail";
+import { QifLine } from "../Models/QifLine";
+import { QifFile } from "../Models/QifFile";
 import { IParser } from "./IParser";
 
 export interface XlsQifSchema {

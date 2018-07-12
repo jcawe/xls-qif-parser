@@ -1,7 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
 import * as path from "path";
 import * as url from "url";
-import { convertExcelToQif } from "./index";
+import { convertExcelToQif } from ".";
 
 let mainWindow: Electron.BrowserWindow;
 

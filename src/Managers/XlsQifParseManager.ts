@@ -1,6 +1,6 @@
 import fs = require("fs");
-import { read, utils, WorkBook } from "xlsx";
-import { QifFile, QifFileType } from "../Models/QifModels";
+import { read, utils, WorkBook } from "xlsx/types";
+import { QifFile, QifFileType } from "../Models/QifFile";
 import { IParser } from "../Parsers/IParser";
 
 export class XlsQifParseManager {
