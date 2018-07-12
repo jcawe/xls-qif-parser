@@ -15,6 +15,6 @@ export class XlsQifParseManager {
         const file = this.parser.parse(wb);
         file.type = fileType;
 
-        fs.writeFile(destPath, file.toString(), (err) => { if(err) throw err.message; });
+        fs.writeFile(destPath, file.toString(), (err) => { if (err) { throw err.message; } });
     }
 }
