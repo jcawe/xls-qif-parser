@@ -1,9 +1,9 @@
-import * as moment from "moment";
-import { IParser } from "./IParser";
-import { QifLine } from "../Models/QifLine";
-import { IXlsQifSchema } from "./IXlsQifSchema";
 import { CellObject, utils, WorkSheet } from "xlsx/types";
+import { IParser } from "./IParser";
+import { IXlsQifSchema } from "./IXlsQifSchema";
 import { QifDetail, QifDetailType } from "../Models/QifDetail";
+import { QifLine } from "../Models/QifLine";
+import * as moment from "moment";
 
 export class SheetQifParser implements IParser<WorkSheet, QifLine[]> {
     public schema: IXlsQifSchema;
