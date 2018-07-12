@@ -1,15 +1,15 @@
-import { QifDetailType, QifFileType } from './Models/QifModels';
-import { XlsQifParser, SheetQifParser, XlsQifSchema } from './Parsers/XlsQifParsers';
-import { XlsQifParseManager } from './Managers/XlsQifParseManager';
+import { XlsQifParseManager } from "./Managers/XlsQifParseManager";
+import { QifDetailType, QifFileType } from "./Models/QifModels";
+import { SheetQifParser, XlsQifParser, XlsQifSchema } from "./Parsers/XlsQifParsers";
 
 export function convertExcelToQif(src: string, dest: string) {
-    let schema: XlsQifSchema = {};
+    const schema: XlsQifSchema = {};
     schema[0] = QifDetailType.D;
     schema[1] = QifDetailType.P;
     schema[2] = QifDetailType.T;
-    let sParser = new SheetQifParser(schema);
-    let parser = new XlsQifParser(sParser)
-    let manager = new XlsQifParseManager(parser);
+    const sParser = new SheetQifParser(schema);
+    const parser = new XlsQifParser(sParser);
+    const manager = new XlsQifParseManager(parser);
 
     manager.convert(src, dest, QifFileType.Bank);
 }

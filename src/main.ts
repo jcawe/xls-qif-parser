@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
 import * as path from "path";
 import * as url from "url";
 import { convertExcelToQif } from "./index";
@@ -14,16 +14,16 @@ function createWindow() {
       label: "DevTools",
       submenu: [
         {
-          role: "reload"
+          role: "reload",
         },
         {
           label: "Open Devpanel",
           click(item, focusedWindow) {
             focusedWindow.webContents.openDevTools();
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   ]));
 
   // and load the index.html of the app.
@@ -52,42 +52,42 @@ function switchButton(btn, active) {
 ipcMain.on("path:excel", (e, path) => switchButton("excel", path === ""));
 ipcMain.on("path:qif", (e, path) => switchButton("qif", path === ""));
 
-ipcMain.on("btn:selectExcel", function () {
+ipcMain.on("btn:selectExcel", function() {
   dialog.showOpenDialog(mainWindow,
     {
       filters: [
-        {name: 'Excel', extensions: ['xlsx']}
-      ]
+        {name: "Excel", extensions: ["xlsx"]},
+      ],
     },
     (filename) => {
       switchButton("excel", filename === undefined);
       mainWindow.webContents.send("path:excel", filename[0]);
-    }
+    },
   );
 });
 
-ipcMain.on("btn:selectQif", function () {
+ipcMain.on("btn:selectQif", function() {
   dialog.showSaveDialog(mainWindow,
     {
       filters: [
-        { name: 'Qif', extensions: ['qif'] }
-      ]
+        { name: "Qif", extensions: ["qif"] },
+      ],
     },
     (filename) => {
       switchButton("qif", filename === undefined);
       mainWindow.webContents.send("path:qif", filename);
-    }
+    },
   );
 });
 
-ipcMain.on("btn:convert", function (e, excelPath: string, qifPath: string) {
+ipcMain.on("btn:convert", function(e, excelPath: string, qifPath: string) {
   try {
     convertExcelToQif(excelPath, qifPath);
     mainWindow.webContents.send("success");
   } catch (error) {
     mainWindow.webContents.send("error", error.message);
   }
-})
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
