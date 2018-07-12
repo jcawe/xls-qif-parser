@@ -50,7 +50,7 @@ function switchButton(btn, active) {
 }
 
 ipcMain.on("path:excel", (e, excelPath) => switchButton("excel", excelPath === ""));
-ipcMain.on("path:qif", (e, path) => switchButton("qif", path === ""));
+ipcMain.on("path:qif", (e, qifPath) => switchButton("qif", qifPath === ""));
 
 ipcMain.on("btn:selectExcel", () => {
   dialog.showOpenDialog(mainWindow,
