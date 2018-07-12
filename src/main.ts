@@ -49,7 +49,7 @@ function switchButton(btn, active) {
   mainWindow.webContents.send("btn:" + btn, active);
 }
 
-ipcMain.on("path:excel", (e, path) => switchButton("excel", path === ""));
+ipcMain.on("path:excel", (e, excelPath) => switchButton("excel", excelPath === ""));
 ipcMain.on("path:qif", (e, path) => switchButton("qif", path === ""));
 
 ipcMain.on("btn:selectExcel", () => {
