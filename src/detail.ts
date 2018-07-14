@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import { QifFile } from "./Models/QifFile";
 
 const tableElement = document.getElementById("table") as HTMLTableElement;
-const btnReverseAllElement = <HTMLTableElement>document.getElementById("btnReverseAll");
+const btnReverseAllElement = document.getElementById("btnReverseAll") as HTMLTableElement;
 
 btnReverseAllElement.onclick = changeWholeFile;
 
@@ -20,8 +20,8 @@ ipcRenderer.on("load", (e, text: string, file: QifFile) => {
             const cell = row.insertCell();
             cell.innerHTML = detail.value;
             changeRowColor(cell, row);
-            cell.onchange = () => { 
-                detail.value = cell.innerHTML; 
+            cell.onchange = () => {
+                detail.value = cell.innerHTML;
                 changeRowColor(cell, row);
             };
         });
@@ -30,11 +30,10 @@ ipcRenderer.on("load", (e, text: string, file: QifFile) => {
 });
 
 function changeRowColor(cell: HTMLTableCellElement, row: HTMLTableRowElement) {
-    if((+cell.innerHTML) < 0) {
+    if ((+cell.innerHTML) < 0) {
         row.classList.add("red");
         row.classList.add("lighten-4");
-    }
-    else {
+    } else {
         row.classList.remove("red");
         row.classList.remove("lighten-4");
     }
@@ -44,8 +43,8 @@ ipcRenderer.on("close", () => {
     ipcRenderer.send("update:file", targetFile, targetFilename);
 });
 
-function changeWholeFile(){
-    for(let i = 1; i < tableElement.rows.length; i++){
+function changeWholeFile() {
+    for (let i = 1; i < tableElement.rows.length; i++) {
         (tableElement.rows[i].cells[3].firstChild as HTMLLinkElement).onclick(null);
     }
 }
