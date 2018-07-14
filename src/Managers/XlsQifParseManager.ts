@@ -28,10 +28,12 @@ export class XlsQifParseManager {
         newFile.type = fileType;
         
         return files.reduce((p, c) => {
-            c.lines.forEach(line => p.lines.push(line));
+            c.lines.forEach(line => {
+                p.lines.push(line)
+            });
 
             return p;
-        }, );
+        }, newFile);
     }
 
     private writeFile(file: QifFile, destPath: string) {

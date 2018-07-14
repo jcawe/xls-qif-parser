@@ -120,5 +120,5 @@ function createRemoveButton(listItemElement: HTMLElement): HTMLElement {
 }
 
 ipcRenderer.on("update:file", (e, file: QifFile, filename: string) => {
-    fileList[filename] = file;
+    fileList[filename] = new QifFile(file);
 });
