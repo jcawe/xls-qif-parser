@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import { QifFile } from "./Models/QifFile";
 
-const tableElement = <HTMLTableElement>document.getElementById("table");
+const tableElement = document.getElementById("table") as HTMLTableElement;
 const btnReverseAllElement = <HTMLTableElement>document.getElementById("btnReverseAll");
 
 btnReverseAllElement.onclick = changeWholeFile;
@@ -14,16 +14,16 @@ ipcRenderer.on("load", (e, text: string, file: QifFile) => {
     targetFile = file;
     targetFilename = text;
 
-    targetFile.lines.forEach(line => {
+    targetFile.lines.forEach((line) => {
         const row = tableElement.insertRow();
-        line.details.forEach(detail => {
+        line.details.forEach((detail) => {
             const cell = row.insertCell();
             cell.innerHTML = detail.value;
             changeRowColor(cell, row);
             cell.onchange = () => { 
                 detail.value = cell.innerHTML; 
                 changeRowColor(cell, row);
-            }
+            };
         });
         row.insertCell().appendChild(createButton(row));
     });
@@ -65,5 +65,5 @@ function createButton(row: HTMLTableRowElement): HTMLElement {
     btnElement.classList.add("btn-small");
     btnElement.appendChild(iconElement);
 
-    return btnElement
+    return btnElement;
 }
