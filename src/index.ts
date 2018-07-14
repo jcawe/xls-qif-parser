@@ -43,7 +43,9 @@ function save() {
             const files: QifFile[] = [];
 
             for (const id in fileList) {
-                files.push(fileList[id]);
+                if(fileList.hasOwnProperty(id)){
+                    files.push(fileList[id]);
+                }
             }
 
             manager.convertFiles(files, filename);
