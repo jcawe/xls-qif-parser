@@ -26,12 +26,12 @@ export class XlsQifParseManager {
     private joinFiles(files: QifFile[], fileType: QifFileType): QifFile {
         const newFile = new QifFile();
         newFile.type = fileType;
-        
+
         return files.reduce((p, c) => {
-            c.lines.forEach(line => p.lines.push(line));
+            c.lines.forEach((line) => p.lines.push(line));
 
             return p;
-        }, );
+        } );
     }
 
     private writeFile(file: QifFile, destPath: string) {
