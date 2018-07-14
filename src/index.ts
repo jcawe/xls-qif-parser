@@ -16,20 +16,19 @@ schema[0] = QifDetailType.D;
 schema[1] = QifDetailType.P;
 schema[2] = QifDetailType.T;
 
-const manager = new XlsQifParseManager(new XlsQifParser(new SheetQifParser(schema)))
+const manager = new XlsQifParseManager(new XlsQifParser(new SheetQifParser(schema)));
 
 btnAddElement.onclick = addNewFile;
 btnClearElement.onclick = removeAllListItems;
 btnSaveElement.onclick = save;
 
-let fileList: { [id: string]: QifFile; } = {};
+const fileList: { [id: string]: QifFile; } = {};
 
 function checkSave() {
     if (fileListElement.firstChild) {
         btnSaveElement.classList.remove("disabled");
         btnSaveElement.classList.add("pulse");
-    }
-    else {
+    } else {
         btnSaveElement.classList.add("disabled");
         btnSaveElement.classList.remove("pulse");
     }
@@ -38,17 +37,17 @@ function checkSave() {
 function save() {
     dialog.showSaveDialog(
         {
-            filters: [{name: "Qif format", extensions: ["qif"]}]
+            filters: [{name: "Qif format", extensions: ["qif"]}],
         },
         (filename: string) => {
             const files: QifFile[] = [];
 
-            for(let id in fileList){
+            for (const id in fileList) {
                 files.push(fileList[id]);
             }
-            
+
             manager.convertFiles(files, filename);
-        }
+        },
     );
 }
 
@@ -56,16 +55,16 @@ function addNewFile() {
     dialog.showOpenDialog(
         {
             filters: [{ name: "Excel (xlsx)", extensions: ["xlsx"] }],
-            properties: ["multiSelections"]
+            properties: ["multiSelections"],
         },
         (filePaths) => {
             importFiles(filePaths);
-        }
+        },
     );
 }
 
 function importFiles(filePaths: string[]) {
-    filePaths.forEach(filePath => {
+    filePaths.forEach((filePath) => {
         const file = manager.import(filePath, QifFileType.Bank);
         importFile(filePath, file);
     });
@@ -84,7 +83,7 @@ function removeListItem(item: HTMLElement) {
 
 function removeAllListItems() {
     while (fileListElement.firstChild) {
-        removeListItem(<HTMLElement>fileListElement.firstChild);
+        removeListItem(fileListElement.firstChild as HTMLElement);
     }
 }
 
@@ -116,7 +115,7 @@ function createRemoveButton(listItemElement: HTMLElement): HTMLElement {
     removeBtnElement.style.marginRight = "10px";
     removeBtnElement.appendChild(removeIcon);
 
-    return removeBtnElement
+    return removeBtnElement;
 }
 
 ipcRenderer.on("update:file", (e, file: QifFile, filename: string) => {

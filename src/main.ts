@@ -4,7 +4,7 @@ import * as url from "url";
 import { QifFile } from "./Models/QifFile";
 
 let mainWindow: Electron.BrowserWindow;
-let menuTemplate = {
+const menuTemplate = {
   label: "DevTools",
   submenu: [
     {
@@ -24,7 +24,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({ show: false });
 
   mainWindow.setMenu(Menu.buildFromTemplate([
-    menuTemplate
+    menuTemplate,
   ]));
 
   // and load the index.html of the app.
@@ -77,9 +77,9 @@ function createModalWindow(viewPath: string): Electron.BrowserWindow {
     protocol: "file:",
     slashes: true,
   }));
-  auxWindow.on("closed", () => { auxWindow = null });
+  auxWindow.on("closed", () => { auxWindow = null; });
   auxWindow.setMenu(Menu.buildFromTemplate([
-    menuTemplate
+    menuTemplate,
   ]));
 
   auxWindow.once("ready-to-show", () => auxWindow.show());
@@ -88,11 +88,11 @@ function createModalWindow(viewPath: string): Electron.BrowserWindow {
 }
 
 ipcMain.on("window:detail", (e, text: string, file: QifFile) => {
-  let win = createModalWindow("../views/detail.html");
+  const win = createModalWindow("../views/detail.html");
 
   win.webContents.once("dom-ready", () => {
     console.log("READY");
-    win.webContents.send("load", text, file)
+    win.webContents.send("load", text, file);
   });
 });
 
