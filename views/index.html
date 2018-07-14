@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>XLS QIF Converter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a class="brand-logo center">XLS QIF Converter</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h5>These are the files you have loaded:</h5>
+    <ul id="fileList" class="collection"></ul>
+
+    <div class="center">
+      <a id="btnAdd" class="btn-floating waves-effect waves-light">
+        <i class="material-icons">add</i>
+      </a>
+      <a id="btnClear" class="btn-floating waves-effect waves-light">
+        <i class="material-icons">delete_sweep</i>
+      </a>
+    </div>
+
+    <div class="center" style="margin-top: 20px">
+      <a id="btnSave" class="btn-large waves-effect waves-light disabled">
+        Save QIF
+        <i class="large material-icons">save</i>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    require("../dist/index.js");
+  </script>
+</body>
+
+</html>

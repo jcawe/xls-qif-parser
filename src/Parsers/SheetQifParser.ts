@@ -35,7 +35,7 @@ export class SheetQifParser implements IParser<WorkSheet, QifLine[]> {
         detail.type = this.schema[col];
 
         if (this.schema[col] === QifDetailType.D) {
-            detail.value = moment(cell.v as Date).format("MM/DD/YYYY");
+            detail.value = moment(cell.v.toString(), "DD/MM/YYYY").format("MM/DD/YYYY");
         } else { detail.value = cell.v.toString(); }
 
         return detail;

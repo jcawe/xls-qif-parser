@@ -1,40 +1,38 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
 import * as path from "path";
 import * as url from "url";
-import { convertExcelToQif } from ".";
+import { QifFile } from "./Models/QifFile";
 
 let mainWindow: Electron.BrowserWindow;
+let menuTemplate = {
+  label: "DevTools",
+  submenu: [
+    {
+      role: "reload",
+    },
+    {
+      label: "Open Devpanel",
+      click(item, focusedWindow) {
+        focusedWindow.webContents.openDevTools();
+      },
+    },
+  ],
+};
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({});
+  mainWindow = new BrowserWindow({ show: false });
 
   mainWindow.setMenu(Menu.buildFromTemplate([
-    {
-      label: "DevTools",
-      submenu: [
-        {
-          role: "reload",
-        },
-        {
-          label: "Open Devpanel",
-          click(item, focusedWindow) {
-            focusedWindow.webContents.openDevTools();
-          },
-        },
-      ],
-    },
+    menuTemplate
   ]));
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, "../index.html"),
+    pathname: path.join(__dirname, "../views/index.html"),
     protocol: "file:",
     slashes: true,
   }));
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
@@ -43,51 +41,9 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  mainWindow.once("ready-to-show", () => mainWindow.show());
 }
-
-function switchButton(btn, active) {
-  mainWindow.webContents.send("btn:" + btn, active);
-}
-
-ipcMain.on("path:excel", (e, excelPath) => switchButton("excel", excelPath === ""));
-ipcMain.on("path:qif", (e, qifPath) => switchButton("qif", qifPath === ""));
-
-ipcMain.on("btn:selectExcel", () => {
-  dialog.showOpenDialog(mainWindow,
-    {
-      filters: [
-        {name: "Excel", extensions: ["xlsx"]},
-      ],
-    },
-    (filename) => {
-      switchButton("excel", filename === undefined);
-      mainWindow.webContents.send("path:excel", filename[0]);
-    },
-  );
-});
-
-ipcMain.on("btn:selectQif", () => {
-  dialog.showSaveDialog(mainWindow,
-    {
-      filters: [
-        { name: "Qif", extensions: ["qif"] },
-      ],
-    },
-    (filename) => {
-      switchButton("qif", filename === undefined);
-      mainWindow.webContents.send("path:qif", filename);
-    },
-  );
-});
-
-ipcMain.on("btn:convert", (e, excelPath: string, qifPath: string) => {
-  try {
-    convertExcelToQif(excelPath, qifPath);
-    mainWindow.webContents.send("success");
-  } catch (error) {
-    mainWindow.webContents.send("error", error.message);
-  }
-});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -113,3 +69,33 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+function createModalWindow(viewPath: string): Electron.BrowserWindow {
+  let auxWindow = new BrowserWindow({ parent: mainWindow, modal: true, show: false });
+  auxWindow.webContents.loadURL(url.format({
+    pathname: path.join(__dirname, viewPath),
+    protocol: "file:",
+    slashes: true,
+  }));
+  auxWindow.on("closed", () => { auxWindow = null });
+  auxWindow.setMenu(Menu.buildFromTemplate([
+    menuTemplate
+  ]));
+
+  auxWindow.once("ready-to-show", () => auxWindow.show());
+  auxWindow.on("close", () => auxWindow.webContents.send("close"));
+  return auxWindow;
+}
+
+ipcMain.on("window:detail", (e, text: string, file: QifFile) => {
+  let win = createModalWindow("../views/detail.html");
+
+  win.webContents.once("dom-ready", () => {
+    console.log("READY");
+    win.webContents.send("load", text, file)
+  });
+});
+
+ipcMain.on("update:file", (e, file: QifFile, filename: string) => {
+  mainWindow.webContents.send("update:file", file, filename);
+});
