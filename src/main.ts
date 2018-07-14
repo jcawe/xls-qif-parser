@@ -91,7 +91,6 @@ ipcMain.on("window:detail", (e, text: string, file: QifFile) => {
   const win = createModalWindow("../views/detail.html");
 
   win.webContents.once("dom-ready", () => {
-    console.log("READY");
     win.webContents.send("load", text, file);
   });
 });
