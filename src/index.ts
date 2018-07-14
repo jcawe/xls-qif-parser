@@ -43,7 +43,7 @@ function save() {
             const files: QifFile[] = [];
 
             for (const id in fileList) {
-                if(fileList.hasOwnProperty(id)){
+                if (fileList.hasOwnProperty(id)) {
                     files.push(fileList[id]);
                 }
             }
