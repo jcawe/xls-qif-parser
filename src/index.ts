@@ -34,35 +34,34 @@ function checkSave() {
     }
 }
 
-function save() {
-    dialog.showSaveDialog(
+async function save() {
+    const { filePath: filename } = await dialog.showSaveDialog(
         {
-            filters: [{name: "Qif format", extensions: ["qif"]}],
-        },
-        (filename: string) => {
-            const files: QifFile[] = [];
+            filters: [{ name: "Qif format", extensions: ["qif"] }],
 
-            for (const id in fileList) {
-                if (fileList.hasOwnProperty(id)) {
-                    files.push(fileList[id]);
-                }
-            }
-
-            manager.convertFiles(files, filename);
-        },
+        }
     );
+
+    const files: QifFile[] = [];
+
+    for (const id in fileList) {
+        if (fileList.hasOwnProperty(id)) {
+            files.push(fileList[id]);
+        }
+    }
+
+    manager.convertFiles(files, filename);
 }
 
-function addNewFile() {
-    dialog.showOpenDialog(
+async function addNewFile() {
+    const { filePaths } = await dialog.showOpenDialog(
         {
             filters: [{ name: "Excel (xlsx)", extensions: ["xlsx"] }],
             properties: ["multiSelections"],
-        },
-        (filePaths) => {
-            importFiles(filePaths);
-        },
+        }
     );
+    
+    importFiles(filePaths);
 }
 
 function importFiles(filePaths: string[]) {

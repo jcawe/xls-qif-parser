@@ -4,7 +4,7 @@ import * as url from "url";
 import { QifFile } from "./Models/QifFile";
 
 let mainWindow: Electron.BrowserWindow;
-const menuTemplate = {
+const menuTemplate: Electron.MenuItemConstructorOptions = {
   label: "DevTools",
   submenu: [
     {
@@ -12,7 +12,7 @@ const menuTemplate = {
     },
     {
       label: "Open Devpanel",
-      click(item, focusedWindow) {
+      click(_, focusedWindow) {
         focusedWindow.webContents.openDevTools();
       },
     },
@@ -21,7 +21,7 @@ const menuTemplate = {
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ show: false });
+  mainWindow = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: true } });
 
   mainWindow.setMenu(Menu.buildFromTemplate([
     menuTemplate,
