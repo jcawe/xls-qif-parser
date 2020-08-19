@@ -28,6 +28,9 @@ jobs:
       with:
         node-version: '10.15.0'
     
+    - name: Install dependencies
+      run: npm install
+    
     # Compile Typescript
     - name: compile
       run: npm run build
