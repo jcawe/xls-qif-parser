@@ -60,7 +60,7 @@ async function addNewFile() {
             properties: ["multiSelections"],
         }
     );
-    
+
     importFiles(filePaths);
 }
 
