@@ -6,12 +6,10 @@ export class QifFile {
     public type: QifFileType;
     public lines: QifLine[] = [];
 
-    public constructor(file?: any) {
-        file = file || {};
+    public constructor(file?: QifFile) {
+        this.type = file ? file.type : null;
 
-        this.type = file.type || null;
-
-        if (file.lines) {
+        if (file && file.lines) {
             file.lines.forEach((line) => {
                 const newLine = new QifLine(line);
                 this.lines.push(newLine);

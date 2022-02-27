@@ -3,10 +3,8 @@ import { QifDetail } from "./QifDetail";
 export class QifLine {
     public details: QifDetail[] = [];
 
-    public constructor(line?: any) {
-        line = line || {};
-
-        if (line.details) {
+    public constructor(line?: QifLine) {
+        if (line && line.details) {
             line.details.forEach((detail) => {
                 const newDetail = new QifDetail(detail);
                 this.details.push(newDetail);
