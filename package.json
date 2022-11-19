@@ -4,7 +4,7 @@
   "description": "xls to qif converter",
   "main": "./dist/main.js",
   "dependencies": {
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "xlsx": "^0.17.0"
   },
   "devDependencies": {
